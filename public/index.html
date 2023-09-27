@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link href="/dist/output.css" rel="stylesheet">
+    <link href="videotheme.css" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
+    <title>tapahtumasivu</title>
+</head>
+<body class="h-screen w-full font-sans bg-gradient-to-r from-white to-blue-300">
+    <nav class="bg-secondary h-20 p-4 shadow-2xl">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+            <svg
+              class="w-6 h-6 text-white cursor-pointer"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+            </div>
+        </div>
+    </nav>
+    <div class="mt-10 md:mt-4 md:h-3/4">
+        <div class=" text-black grid gap-10 md:grid-cols-5 md:h-full md:grid-rows-0 md:gap-4 md:mx-4">
+            <div class="w-full md:col-span-3 md:flex md:items-start">
+                <video
+                id="my-video"
+                controls
+                preload="auto"
+                poster="/img/vide-image.jpeg"
+                data-setup="{}"
+                class="video-js vsj-16-9 vsj-theme-sea w-full h-full aspect-video"
+              >
+                <source src="https://c114aad09873.entrypoint.cloud.wowza.com/app-6qG3Q2V3/ngrp:d0f97714_all/playlist.m3u8" type="application/x-mpegURL" />
+                <source src="" type="video/mp4" />
+                <p class="vjs-no-js">
+                  To view this video please enable JavaScript, and consider upgrading to a
+                  web browser that
+                  <a href="https://videojs.com/html5-video-support/" target="_blank"
+                    >supports HTML5 video</a
+                  >
+                </p>
+              </video>
+            </div>
+            <div class="relative shadow-2xl bg-white rounded-t-lg w-full md:col-span-2 md:h-full">
+                <ul id="messages" class="max-h-40 h-40 w-full px-4 break-words overflow-y-auto md:min-h-full md:h-full">
+                    <!-- Your chat messages go here -->
+                </ul>
+                <form id="form" class="rounded-b-lg w-full bg-gray-400 p-2 flex flex-direction-row" action="">
+                    <div class="w-3/4 flex flex-direction-row">
+                        <input id="nimi" autocomplete="off" class="text-sm m-1 w-1/4 block p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name" />
+                        <input id="input" autocomplete="off" class="text-sm m-1 w-3/4 block p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Type your message..." />
+                    </div>  
+                    <button class="w-1/4 bg-secondarydark hover:bg-secondarylight text-white font-bold py-2 px-4 rounded-full">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+    
+        var messages = document.getElementById('messages');
+        var nimi = document.getElementById('nimi');
+        var form = document.getElementById('form');
+        var input = document.getElementById('input');
+    
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (input.value && nimi.value) {
+                socket.emit('chat message', nimi.value + " says: " + input.value);
+                input.value = '';
+            }
+        });
+    
+        socket.on('chat message', function(msg) {
+            var item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+            // Scroll to the bottom of the chat container
+            messages.scrollTop = messages.scrollHeight;
+        });
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 1em;
+        }
+        ::-webkit-scrollbar-track {
+            background: hsl(0, 0%, 100%);
+            border-radius: 100vw;
+            margin-block: .5em;
+            margin-inline: 3em;
+        }
+        ::-webkit-scrollbar-thumb {
+           background: hsl(0, 0%, 23%);
+           border: .25em solid hsl(0, 0%, 100%);
+           border-radius: 100vw;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+           background: hsl(0, 0%, 23%);
+        }
+        li {
+            margin-top:8px;
+            margin-bottom:8px;
+        }  
+    </style>
+</body>
+</html>
